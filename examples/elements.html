@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Example - elements</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="build/bundle.js"></script>
+    <script>
+        const {
+            InterRenderer,
+            InterElement,
+            Scene,
+            InterImageElement
+        } = INTER;
+
+        const renderer = new InterRenderer();
+        const scene = new Scene();
+
+        const image = new InterImageElement();
+        image.src = "https://i.pinimg.com/474x/49/0d/cd/490dcd0a6072aeee34e49993b89c9a19.jpg";
+        image.size.set(100, 150)
+        image.style.margin = 10;
+        image.style.radius = 10;
+        image.style.strokeColor = "red";
+
+        const box = new InterElement();
+        box.size.set(100, 100)
+        box.style.margin = 10;
+        box.style.stroke = true;
+        box.style.strokeColor = "blue";
+
+        scene.append(image, box)
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        document.body.append(renderer.canvas);
+
+        function update() {
+            renderer.render(scene);
+
+            requestAnimationFrame(() => update())
+        }
+
+        update();
+    </script>
+</body>
+
+</html>

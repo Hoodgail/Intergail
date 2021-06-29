@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "docs/src/build",
+        "noImplicitAny": true,
+        "module": "CommonJS",
+        "target": "ESNext",
+        "strict": true,
+        "alwaysStrict": true,
+        "allowJs": false,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true
+    },
+    "files": [
+        "src/index.ts"
+    ]
+}
