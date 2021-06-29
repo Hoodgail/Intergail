@@ -43,23 +43,22 @@ export default class InterRenderer {
         this.canvas.height = h * window.devicePixelRatio;
     }
 
-    renderChildren(children: InterElement, parent: InterElement) {
-        children.localPosition.copy(children.position.clone().add(parent.localPosition));
-
+    renderChildren(children: InterElement) {
         if (this.context !== null) {
             this.calls += 1;
 
             children.render(this.context, this.mouse);
 
-            children.children.forEach((child: InterElement) => this.renderChildren(child, children))
+            children.children.forEach((child: InterElement) => this.renderChildren(child))
         }
 
     }
 
     render(scene: Scene) {
-        this.calls = 0;
+        this.calls = 1;
         this.clear();
-        scene.children.forEach((child: InterElement) => this.renderChildren(child, scene))
+
+        this.renderChildren(scene);
     }
 
 }

@@ -86,6 +86,9 @@ export default class InterElement {
     public begin(context: CanvasRenderingContext2D) {
         context.save();
         context.beginPath();
+
+        if (this.parent !== null) this.localPosition.copy(this.position.clone().add(this.parent.localPosition))
+        else this.localPosition.copy(this.position);
     }
 
     public end(context: CanvasRenderingContext2D) {
@@ -105,6 +108,41 @@ export default class InterElement {
         position.y -= this.stylesheet.marginTop == this.stylesheet.marginBottom
             ? 0 : this.stylesheet.marginBottom;
 
+        if (this.stylesheet.stroke == true) {
+            position.x += this.stylesheet.strokeSize;
+            position.y += this.stylesheet.strokeSize;
+        }
+
+
+        switch (this.stylesheet.display) {
+            case "flex":
+            default:
+                if (this.children.length !== 0) {
+                    this.children.forEach(child => {
+
+                        const data = child.computedStyleData();
+
+                        size.x += child.stylesheet.marginRight;
+                        size.x += child.stylesheet.marginLeft
+
+                        size.add(data.size);
+
+                    });
+
+                    let child = this.children.reduce(function (prev, current) {
+                        return (prev.size.y > current.size.y) ? prev : current
+                    });
+
+                    let ch = child.computedStyleData();
+
+                    size.y = ch.size.y;
+                    size.y += child.stylesheet.marginBottom;
+                    size.y += child.stylesheet.marginTop;
+                }
+                break;
+
+        }
+
         if (this.parent !== null && pc !== null) {
 
             switch (this.parent.stylesheet.display) {
@@ -114,6 +152,7 @@ export default class InterElement {
                     position.x += pc.size.x;
                     position.x += pc.stylesheet.marginRight;
                     position.x += pc.stylesheet.marginLeft;
+
                     break;
 
                 case "block":
@@ -127,11 +166,11 @@ export default class InterElement {
         return { position, size }
     }
 
-    renderRound(context: CanvasRenderingContext2D, { position }: computedStyleDataInterface) {
+    renderRound(context: CanvasRenderingContext2D, { position, size }: computedStyleDataInterface) {
         const { x, y } = position;
         const { radius } = this.stylesheet;
-        const width = this.size.x;
-        const height = this.size.y;
+        const width = size.x;
+        const height = size.y;
 
         context.moveTo(x + radius, y);
         context.lineTo(x + width - radius, y);
@@ -159,15 +198,15 @@ export default class InterElement {
         this.begin(context);
 
         const style = this.computedStyleData();
-        const { position } = style;
+        const { position, size } = style;
 
         if (this.stylesheet.radius !== 0) this.renderRound(context, style)
 
         context.rect(
             position ? position.x : this.localPosition.x,
             position ? position.y : this.localPosition.y,
-            this.size.x,
-            this.size.y
+            size.x,
+            size.y
         );
 
         this.draw(context, style);
