@@ -20,17 +20,20 @@
             InterRenderer,
             InterElement,
             Scene,
-            InterImageElement
+            InterImageElement,
+            Vector2
         } = INTER;
 
         const renderer = new InterRenderer();
         const scene = new Scene();
 
+        const lerp = (x, y, a) => x * (1 - a) + y * a;
+
         const image = new InterImageElement();
         image.src = "https://i.pinimg.com/474x/49/0d/cd/490dcd0a6072aeee34e49993b89c9a19.jpg";
         image.size.set(100, 150)
         image.style.margin = 10;
-        image.style.radius = 10;
+        image.style.radius = 5;
         image.style.strokeColor = "red";
 
         const box = new InterElement();
@@ -46,6 +49,17 @@
         document.body.append(renderer.canvas);
 
         function update() {
+
+            image.style.radius = image.hover
+                ? lerp(image.style.radius, 20, 0.3)
+                : lerp(image.style.radius, 5, 0.3);
+
+            image.size.lerp(
+                image.hover
+                    ? new Vector2(100 + 20, 150 + 20)
+                    : new Vector2(100, 150), 0.3
+            )
+
             renderer.render(scene);
 
             requestAnimationFrame(() => update())

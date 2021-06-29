@@ -25,6 +25,9 @@ export default class InterElement {
 
     public children: InterCollection = new InterCollection();
 
+    public hover: boolean = false;
+    public clicked: boolean = false;
+
     get style() {
         return this.stylesheet
     }
@@ -139,7 +142,6 @@ export default class InterElement {
         context.quadraticCurveTo(x, y + height, x, y + height - radius);
         context.lineTo(x, y + radius);
         context.quadraticCurveTo(x, y, x + radius, y);
-        context.closePath();
 
         context.clip();
     }
@@ -152,7 +154,7 @@ export default class InterElement {
         context.lineWidth = line;
     }
 
-    public render(context: CanvasRenderingContext2D) {
+    public render(context: CanvasRenderingContext2D, mouse: Vector2) {
 
         this.begin(context);
 
@@ -173,6 +175,8 @@ export default class InterElement {
         context.strokeStyle = this.stylesheet.strokeColor;
 
         if (this.stylesheet.stroke == true) this.renderStroke(context);
+
+        this.hover = context.isPointInPath(mouse.x, mouse.y)
 
         this.end(context);
 

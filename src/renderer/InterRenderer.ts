@@ -1,8 +1,10 @@
 import InterElement from "../core/InterElement";
 import Scene from "../core/Scene";
+import Vector2 from "../math/Vector2";
 
 export default class InterRenderer {
 
+    public mouse: Vector2 = new Vector2();
     public calls: number = 0;
 
     private _context: CanvasRenderingContext2D | null = null;
@@ -14,6 +16,17 @@ export default class InterRenderer {
 
         this._context = this.canvas.getContext("2d")
         return this._context;
+    }
+
+    constructor() {
+        this.canvas.addEventListener("mousemove", (event: MouseEvent) => this.mousemove(event))
+    }
+
+    mousemove(event: MouseEvent) {
+        // important: correct mouse position:
+        let rect = this.canvas.getBoundingClientRect();
+
+        this.mouse.set(event.clientX - rect.left, event.clientY - rect.top)
     }
 
     clear() {
@@ -36,7 +49,7 @@ export default class InterRenderer {
         if (this.context !== null) {
             this.calls += 1;
 
-            children.render(this.context);
+            children.render(this.context, this.mouse);
 
             children.children.forEach((child: InterElement) => this.renderChildren(child, children))
         }
